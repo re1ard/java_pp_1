@@ -23,7 +23,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private String sql_add_user = "INSERT INTO `users` (`id`, `name`, `last_name`, `age`) VALUES (NULL, '%s', '%s', '%d')";
     private String sql_remove_user_of_id = "DELETE FROM `users` WHERE `users`.`id` = %d;";
     private String sql_get_all_users = "SELECT `id`,`name`,`last_name`,`age` FROM `users`";
-    private Util db_utils = null;
+    private Util db_utils;
 
     public UserDaoJDBCImpl() {
         db_utils = new Util();
