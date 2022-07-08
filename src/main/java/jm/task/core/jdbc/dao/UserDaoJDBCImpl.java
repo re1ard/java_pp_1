@@ -31,13 +31,13 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try (Connection con = db_utils.getConnection()) {
-            con.createStatement().executeQuery(sql_create_table);
+            con.createStatement().executeUpdate(sql_create_table);
         } catch (SQLException sql_e) { sql_e.printStackTrace(); }
     }
 
     public void dropUsersTable() {
         try (Connection con = db_utils.getConnection()) {
-            con.createStatement().executeQuery(sql_drop_table);
+            con.createStatement().executeUpdate(sql_drop_table);
         } catch (SQLException sql_e) { sql_e.printStackTrace(); }
     }
 
@@ -64,7 +64,9 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection con = db_utils.getConnection()) {
             ResultSet result = con.createStatement().executeQuery(sql_get_all_users);
             while (result.next()) {
-                users.add(new User(result.getString(1), result.getString(2), result.getByte(3)));
+                User user = new User(result.getString(2), result.getString(3), result.getByte(4));
+                System.out.println(user);
+                users.add(user);
             }
         } catch (SQLException sql_e) { sql_e.printStackTrace(); }
 
@@ -73,7 +75,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void cleanUsersTable() {
         try (Connection con = db_utils.getConnection()) {
-            con.createStatement().executeQuery(sql_clearup_table);
+            con.createStatement().executeUpdate(sql_clearup_table);
         } catch (SQLException sql_e) { sql_e.printStackTrace(); }
     }
 }
