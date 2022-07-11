@@ -16,12 +16,25 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-
+        try (Session session = SF.getCurrentSession()) {
+            session.beginTransaction();
+            session.createNativeQuery("CREATE TABLE IF NOT EXISTS `users` ( " +
+                    "`id` BIGINT NOT NULL AUTO_INCREMENT , " +
+                    "`name` VARCHAR(256) NOT NULL , " +
+                    "`last_name` VARCHAR(256) NOT NULL , " +
+                    "`age` INT NOT NULL , PRIMARY KEY (`id`)" +
+                    ") ENGINE = InnoDB;");
+            session.getTransaction().commit();
+        }
     }
 
     @Override
     public void dropUsersTable() {
-
+        try (Session session = SF.getCurrentSession()) {
+            session.beginTransaction();
+            session.createNativeQuery("DROP TABLE IF EXISTS `users`;");
+            session.getTransaction().commit();
+        }
     }
 
     @Override
@@ -58,7 +71,8 @@ public class UserDaoHibernateImpl implements UserDao {
     public void cleanUsersTable() {
         try (Session session = SF.getCurrentSession()) {
             session.beginTransaction();
-            session.createQuery("SELECT i FROM User i", User.class).getResultList().stream().forEach(session :: remove);
+            //session.createQuery("SELECT i FROM User i", User.class).getResultList().stream().forEach(session :: remove);
+            session.createQuery("delete User").executeUpdate();
             session.getTransaction().commit();
         }
     }
