@@ -4,6 +4,7 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,6 +43,20 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
+        try (PreparedStatement state = db_utils.getConnection().prepareStatement(sql_add_user.replaceAll("'%s'", "?").replaceAll("'%d'", "?"))) {
+            state.setString(1, name);
+            state.setString(2, lastName);
+            state.setInt(3, (int) age);
+
+            int count = state.executeUpdate();
+            if (count > 0) {
+                System.out.println(String.format("User с именем – %s добавлен в базу данных", name));
+            } else {
+                System.out.println(String.format("User с именем – %s НЕ БЫЛ добавлен в базу данных", name));
+            }
+        } catch (SQLException sql_e) { sql_e.printStackTrace(); }
+
+        /*
         try (Connection con = db_utils.getConnection()) {
             int count = con.createStatement().executeUpdate(String.format(sql_add_user, name, lastName, Integer.valueOf(age)));
             if (count > 0) {
@@ -50,12 +65,19 @@ public class UserDaoJDBCImpl implements UserDao {
                 System.out.println(String.format("User с именем – %s НЕ БЫЛ добавлен в базу данных", name));
             }
         } catch (SQLException sql_e) { sql_e.printStackTrace(); }
+         */
     }
 
     public void removeUserById(long id) {
+        try (PreparedStatement state = db_utils.getConnection().prepareStatement(sql_remove_user_of_id.replaceAll("%d", "?"))) {
+            state.setLong(1, id);
+        } catch (SQLException sql_e) { sql_e.printStackTrace(); }
+
+        /*
         try (Connection con = db_utils.getConnection()) {
             con.createStatement().executeUpdate(String.format(sql_remove_user_of_id, id));
         } catch (SQLException sql_e) { sql_e.printStackTrace(); }
+         */
     }
 
     public List<User> getAllUsers() {
